@@ -1,0 +1,5 @@
+Flask==1.1.2
+ultralytics-yolov5==
+supervision==0.1
+numpy==1.21.2
+decord==0.5.2
