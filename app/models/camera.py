@@ -35,7 +35,7 @@ def annotate_frame(frame, x1, y1, x2, y2, tracker_id):
     return frame
 
 def collision_frame(frame, tracker_id, other_tracker_id):
-    if velocities[tracker_id] > 10 or velocities[other_tracker_id] > 10:
+    if velocities[tracker_id] > 5 or velocities[other_tracker_id] > 5:
         box1 = boxes[tracker_id]
         box2 = boxes[other_tracker_id]
         
