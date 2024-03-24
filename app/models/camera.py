@@ -51,6 +51,18 @@ def collision_frame(frame, tracker_id1, tracker_id2):
     
     return frame
 
+def detect_collision(trackerid1, trackerid2):
+        x1_1, y1_1, x2_1, y2_1 = box[trackerid1]
+        x1_2, y1_2, x2_2, y2_2 = box[trackerid2]
+        
+        if x2_1 < x1_2 or x2_2 < x1_1:
+            return False
+
+        if y2_1 < y1_2 or y2_2 < y1_1:
+            return False
+
+        return True
+
 while vidObj.isOpened():
     # Read a frame from the video
     success, frame = vidObj.read()
@@ -75,18 +87,19 @@ while vidObj.isOpened():
             else:
                 velocities[tracker_id] = 0
             centroids[tracker_id] = (centroid_x, centroid_y)
+            
+            # reverse y comparisons
+            for box in boxes:
+                pass
+            
             annotated_frame = annotate_frame(uncropped, x1, y1, x2, y2, tracker_id)
             frames[tracker_id] = frame_id
         
-        # reverse y comparisons
-        for box in boxes:
-            pass
-            # help quant tree????
-            # if centroids are within distance then check object border
-            # https://stackoverflow.com/questions/40795709/checking-whether-two-rectangles-overlap-in-python-using-two-bottom-left-corners 
-            
+
+
+        
         # Display the annotated frame
-        # cv2.imshow("YOLOv8 Inference", annotated_frame)
+        cv2.imshow("YOLOv8 Inference", annotated_frame)
         # Break the loop if 'q' is pressed
     
         if cv2.waitKey(1) & 0xFF == ord("q"):
