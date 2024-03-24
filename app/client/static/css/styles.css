@@ -1,5 +1,5 @@
 body {
-    background: linear-gradient(to bottom, rgb(165, 165, 202), lightblue);
+    background: linear-gradient(to bottom, rgb(228, 243, 246), lightblue);
     height: 100vh;
     width: 100vw;
     display: flex;
@@ -69,8 +69,8 @@ body {
 
 .upload-label {
     padding: 10px;
-    background-color: #fefefe;
-    color: white;
+    background-color: #E1ECF1;
+    color: #E1ECF1;
     text-align: center;
     cursor: pointer;
     background-image: url("../images/upload_icon.jpg");

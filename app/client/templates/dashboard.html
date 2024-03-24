@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .full-screen {
+            height: 95%;
+            width: 95%;
+            object-fit:fill;
+            margin-top: 20px;
+            margin-left: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="review">
+        <img src="{{ url_for('static', filename='images/dashboard.png') }}" alt="goto_dashboard" class="full-screen">
+    </a>
+
+</body>
+</html>
