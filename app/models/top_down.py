@@ -3,23 +3,19 @@ import os
 import cv2
 from tracker import *
 
+import random
+
 os.chdir('C:/Users/ishaa/Downloads')
 
 object_detector = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=40)
 tracker = EuclideanDistTracker()
-vidObj = cv2.VideoCapture('test1.mp4') 
-
-light_white = (0, 0, 200)
-dark_white = (145, 60, 255)
-
+vidObj = cv2.VideoCapture('topdown.mp4') 
 
 frame_id = 0
 centroids = {}
 velocities = {}
 boxes = {}
 frames = {}
-
-# turn up contrast
 
 def compute_velocity(tracker_id, centroid_x, centroid_y):
     prev_x, prev_y = centroids[tracker_id]
@@ -35,6 +31,7 @@ def annotate_frame(frame, x1, y1, x2, y2, tracker_id):
 
 # mock random velocity values based on regions of interest
 
+
 while vidObj.isOpened():
     # Read a frame from the video
     success, frame = vidObj.read()
@@ -45,6 +42,7 @@ while vidObj.isOpened():
         frame_id += 1
         
         roi = frame[40:320, 50:610]
+        roi_high = [200,400]
         roi = cv2.resize(roi, (roi.shape[1] * 2, roi.shape[0] * 2))
         
         mask = object_detector.apply(roi)
@@ -66,14 +64,17 @@ while vidObj.isOpened():
         boxes_ids = tracker.update(detections)
         for box_id in boxes_ids:
             x, y, w, h, id = box_id
-            cv2.putText(roi, str(id), (x, y - 15), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
-            cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
-        
-        # reverse y comparisons
-        for box in boxes:
-            pass
-            # help quant tree????
+            x2 = x + w
             
+            if x > roi_high[0] and x2 < roi_high[1]:
+                velocity = round(random.uniform(3, 4),1)
+            else:
+                velocity = round(random.uniform(1, 3),1)
+                
+            # roi = annotate_frame(roi, x, y, x2, y + h, id)
+            cv2.putText(roi, str(velocity), (x, y - 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 2)
+            cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
+
         # Display the annotated frame
         cv2.imshow("OpenCV Inference", roi)
         # Break the loop if 'q' is pressed
