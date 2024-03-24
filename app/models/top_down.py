@@ -11,6 +11,9 @@ object_detector = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=4
 tracker = EuclideanDistTracker()
 vidObj = cv2.VideoCapture('topdown.mp4') 
 
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Be sure to use lower case
+out = cv2.VideoWriter('output.mp4', fourcc, 30.0, (1280, 720))
+
 frame_id = 0
 centroids = {}
 velocities = {}
@@ -42,6 +45,7 @@ while vidObj.isOpened():
         frame_id += 1
         original_length = frame.shape[1] * 2
         original_height = frame.shape[0] * 2
+        print(original_length, original_height)
         old_frame = cv2.resize(frame, (original_length, original_height))
         roi = frame[40:320, 50:610]
         roi_high = [200,400]
@@ -78,6 +82,7 @@ while vidObj.isOpened():
         # Display the annotated frame
         # cv2.imshow("OpenCV Inference", roi)
         cv2.imshow("OpenCV Inference", old_frame)
+        out.write(frame)
         # Break the loop if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
@@ -86,5 +91,6 @@ while vidObj.isOpened():
         break
 
 # Release the video capture object and close the display window
+out.release()
 vidObj.release()
 cv2.destroyAllWindows()
