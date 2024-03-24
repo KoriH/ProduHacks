@@ -4,10 +4,13 @@ import numpy as np
 import os
 import cv2
 
-os.chdir('/Users/kori0909/Downloads')
+# os.chdir('/Users/kori0909/Downloads')
+os.chdir('C:/Users/ishaa/Downloads')
 model = YOLO("yolov8n.pt")
 tracker = sv.ByteTrack()
 vidObj = cv2.VideoCapture('topdown.mp4') 
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
+out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
 
 frame_id = 0
 centroids = {}
@@ -94,11 +97,10 @@ while vidObj.isOpened():
             
             annotated_frame = annotate_frame(uncropped, x1, y1, x2, y2, tracker_id)
             frames[tracker_id] = frame_id
-        
 
-
-        
         # Display the annotated frame
+        print(annotated_frame.shape)
+        # out.write(annotated_frame)
         cv2.imshow("YOLOv8 Inference", annotated_frame)
         # Break the loop if 'q' is pressed
     
@@ -108,6 +110,8 @@ while vidObj.isOpened():
     else:
         # Break the loop if the end of the video is reached
         break
+
+out.release()
 vidObj.release()
 cv2.destroyAllWindows()
 
