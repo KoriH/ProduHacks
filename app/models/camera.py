@@ -188,3 +188,8 @@ cv2.destroyAllWindows()
 # vidObj.release()
 # out.release()
 # cv2.destroyAllWindows()
+
+            ret, frame = vidObj.read()
+            if ret:
+                frame_height, frame_width = frame.shape[:2]
+            compute_velocity(tracker_id, centroid_x, centroid_y, scale_factor=1)
