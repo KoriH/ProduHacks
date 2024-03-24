@@ -15,27 +15,20 @@ centroids = {}
 velocities = {}
 boxes = {}
 frames = {}
-times = {}
 
-
-# calibration using time between occurences
+# turn up contrast
 
 def compute_velocity(tracker_id, centroid_x, centroid_y):
     prev_x, prev_y = centroids[tracker_id]
-    # velocity = np.sqrt((centroid_x - prev_x) ** 2 + (centroid_y - prev_y) ** 2)
     velocity = centroid_x - prev_x / frames[tracker_id]
     # conversion of frames to seconds
     velocities[tracker_id] = velocity
 
-# green instead of ruple
 def annotate_frame(frame, x1, y1, x2, y2, tracker_id):
     x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
     frame = cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 255), 2)
     frame = cv2.putText(frame, f"{velocities[tracker_id]}", (x2+7, y2), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 1)
     return frame
-
-def collision_frame(frame, x1, y1, x2, y2, tracker_id):
-    # different color + text at bottom (bold and red)
 
 while vidObj.isOpened():
     # Read a frame from the video
@@ -50,7 +43,7 @@ while vidObj.isOpened():
         detections = tracker.update_with_detections(detections)
         
         for tracker_id, box in zip(detections.tracker_id, detections.xyxy):
-            x1, y1, x2, y2 = box 
+            x1, y1, x2, y2 = box #[0]
             y1, y2 = y1 + 220, y2 + 220
             boxes[tracker_id] = (x1, y1, x2, y2)
             
@@ -65,7 +58,6 @@ while vidObj.isOpened():
         for box in boxes:
             pass
             # help quant tree????
-            # if centroids are within distance then check object border
             
         # Display the annotated frame
         cv2.imshow("YOLOv8 Inference", annotated_frame)
