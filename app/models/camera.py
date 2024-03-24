@@ -78,6 +78,8 @@ while vidObj.isOpened():
         detections = sv.Detections.from_ultralytics(results)
         detections = tracker.update_with_detections(detections)
         
+        annotated_frame = None  # Initialize annotated_frame to None
+
         for tracker_id, box in zip(detections.tracker_id, detections.xyxy):
             x1, y1, x2, y2 = box 
             y1, y2 = y1 + 220, y2 + 220
@@ -86,7 +88,7 @@ while vidObj.isOpened():
             centroid_x = (x1 + x2) / 2
             centroid_y = (y1 + y2) / 2
             if tracker_id in centroids:
-                compute_velocity(tracker_id, centroid_x, centroid_y)
+                compute_velocity(tracker_id, centroid_x, centroid_y, scale_factor=2)
             else:
                 velocities[tracker_id] = 0
             centroids[tracker_id] = (centroid_x, centroid_y)
@@ -97,11 +99,16 @@ while vidObj.isOpened():
             
             annotated_frame = annotate_frame(uncropped, x1, y1, x2, y2, tracker_id)
             frames[tracker_id] = frame_id
-
-        # Display the annotated frame
-        print(annotated_frame.shape)
-        # out.write(annotated_frame)
-        cv2.imshow("YOLOv8 Inference", annotated_frame)
+        
+        # reverse y comparisons
+        for box in boxes:
+            pass
+            # help quant tree????
+            # if centroids are within distance then check object border
+            
+        # Display the annotated frame if it's not None
+        if annotated_frame is not None:
+            cv2.imshow("YOLOv8 Inference", annotated_frame)
         # Break the loop if 'q' is pressed
     
         if cv2.waitKey(1) & 0xFF == ord("q"):
@@ -169,9 +176,9 @@ cv2.destroyAllWindows()
 # fps = vidObj.get(cv2.CAP_PROP_FPS)
 # fourcc = cv2.VideoWriter_fourcc(*'mp4v') 
 # out = cv2.VideoWriter('output.mp4', fourcc, fps, (frame_width, frame_height))
-# # while vidObj.isOpened():
-#     # Read a frame from the video
+# while vidObj.isOpened():
 #     success, frame = vidObj.read()
+#     annotated_frame = None
     
 #     if success:
 #         frame_id += 1
@@ -196,14 +203,11 @@ cv2.destroyAllWindows()
 #             annotated_frame = annotate_frame(uncropped, x1, y1, x2, y2, tracker_id)
 #             frames[tracker_id] = frame_id
         
-#         # Write the annotated frame into the output video
 #         out.write(annotated_frame)
 
-#         # Break the loop if 'q' is pressed
 #         if cv2.waitKey(1) & 0xFF == ord("q"):
 #             break
 #     else:
-#         # Break the loop if the end of the video is reached
 #         break
 # vidObj.release()
 # out.release()
