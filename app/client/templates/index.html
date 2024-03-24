@@ -19,9 +19,17 @@
     </div>
 
     <div class="custom-upload">
-        <input type="file" id="upload-bar" class="upload-input" onchange="handleFileUpload()">
-        <label for="upload-bar" class="upload-label"></label>
+        <input type="file" id="upload-bar" class="upload-input">
+        <label for="upload-bar" id="upload-label" class="upload-label"></label>
     </div>
+
+    <script>
+        document.getElementById('upload-label').addEventListener('click', function() {
+            setTimeout(function() {
+            window.location.href = 'loading_page';
+        }, 2500);
+        });
+    </script>
 
 </body>
 </html>
