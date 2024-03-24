@@ -5,10 +5,13 @@ from tracker import *
 
 os.chdir('C:/Users/ishaa/Downloads')
 
-# object_detector = cv2.createBackgroundSubtractorMOG2()
 object_detector = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=40)
 tracker = EuclideanDistTracker()
 vidObj = cv2.VideoCapture('test1.mp4') 
+
+light_white = (0, 0, 200)
+dark_white = (145, 60, 255)
+
 
 frame_id = 0
 centroids = {}
@@ -27,7 +30,7 @@ def compute_velocity(tracker_id, centroid_x, centroid_y):
 def annotate_frame(frame, x1, y1, x2, y2, tracker_id):
     x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
     frame = cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 255), 2)
-    frame = cv2.putText(frame, f"{velocities[tracker_id]}", (x2+7, y2), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 0, 255), 1)
+    frame = cv2.putText(frame, f"{velocities[tracker_id]}", (x2+7, y2), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 255), 1)
     return frame
 
 while vidObj.isOpened():
@@ -38,23 +41,22 @@ while vidObj.isOpened():
     
     if success:
         frame_id += 1
-        roi = frame[400:750, :]
         
-        
-        gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-        _, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+        roi = frame[40:320, 50:610]
+        roi = cv2.resize(roi, (roi.shape[1] * 2, roi.shape[0] * 2))
         
         mask = object_detector.apply(roi)
-        _, mask = cv2.threshold(thresh, 254, 255, cv2.THRESH_BINARY)
-    
+        _, mask = cv2.threshold(mask, 254, 255, cv2.THRESH_BINARY)
         contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        
         detections = []
         for cnt in contours:
             # Calculate area and remove small elements
             area = cv2.contourArea(cnt)
-            if area > 100 and area < 1000:
+            if area > 50 and area < 1000:
                 # cv2.drawContours(roi, [cnt], -1, (0, 255, 0), 2)
                 x, y, w, h = cv2.boundingRect(cnt)
+                # shift and write back onto main image
                 cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
                 detections.append([x, y, w, h])
             #Show image
