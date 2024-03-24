@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+    <div class="heading">
+        <header>
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="logo" height="100" width="100" class="centered-logo" style="float:right">
+            <h1 class="centered-header">INPRE</h1>
+        </header>
+    </div>
+
+    <a href="home">
+        <img src="{{ url_for('static', filename='images/login.png') }}" alt="goto_dashboard" height="203" width="408" class="centered-logo">
+    </a>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            console.log('Form submitted');  // Debugging line
+            event.preventDefault();
+            console.log('Default action prevented');  // Debugging line
+            window.location.href = 'loading_page';
+            console.log('Redirection initiated');  // Debugging line
+        });
+    </script>
+
+</body>
+</html>
