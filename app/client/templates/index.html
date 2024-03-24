@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+    <div class="heading">
+        <header>
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="logo" height="100" width="150" class="centered-logo">
+            <h1 class="centered-header">INPRE</h1>
+        </header>
+    </div>
+
+    <div class="upload-bar">
+
+        <h2 class="centered-text">Upload your file here</h2>
+
+    </div>
+
+    <div class="custom-upload">
+        <input type="file" id="upload-bar" class="upload-input">
+        <label for="upload-bar" id="upload-label" class="upload-label"></label>
+    </div>
+
+    <script>
+        document.getElementById('upload-label').addEventListener('click', function() {
+            setTimeout(function() {
+            window.location.href = 'loading_page';
+        }, 2500);
+        });
+    </script>
+
+</body>
+</html>
