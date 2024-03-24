@@ -16,18 +16,14 @@ boxes = {}
 frames = {}
 times = {}
 
-# calibration using time between occurences
-# mock random velocity values based on regions of interest
-
 def compute_velocity(tracker_id, centroid_x, centroid_y, scale_factor):
     prev_x, prev_y = centroids.get(tracker_id, (centroid_x, centroid_y))
-    frame_count = frames.get(tracker_id, 1)  # default to 1 if tracker_id not in frames
+    frame_count = frames.get(tracker_id, 1)
     dx = (centroid_x - prev_x) * scale_factor
     dy = (centroid_y - prev_y) * scale_factor
     velocity = np.sqrt(dx**2 + dy**2) / frame_count * 30
     velocities[tracker_id] = round(velocity, 1)
 
-# green instead of ruple
 def annotate_frame(frame, x1, y1, x2, y2, tracker_id):
     x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
     frame = cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
@@ -41,10 +37,18 @@ def collision_frame(frame, tracker_id1, tracker_id2):
     
     label_y = max(box1[3], box2[3]) + 10
     
-    frame = cv2.putText(frame, "Collision Detected!", (label_x, label_y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+    if (velocities[tracker_id1] and velocities[tracker_id2]) > 4:
+        frame = cv2.putText(frame, "Major Collision Detected!", (label_x, label_y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+    else:
+        frame = cv2.putText(frame, "Minor Collision Detected!", (label_x, label_y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
     
+    x1 = min(box1[0], box2[0])
+    x2 = max(box1[2], box2[2])
+    y1 = min(box1[1], box2[1])
+    y2 = max(box1[3], box2[3])
     
-    # different color + text at bottom (bold and red)
+    frame = cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
+    
     return frame
 
 while vidObj.isOpened():
@@ -93,7 +97,6 @@ while vidObj.isOpened():
         break
 vidObj.release()
 cv2.destroyAllWindows()
-
 
 # Process Camera Live
 # cap = cv2.VideoCapture(0)  
@@ -188,8 +191,3 @@ cv2.destroyAllWindows()
 # vidObj.release()
 # out.release()
 # cv2.destroyAllWindows()
-
-            ret, frame = vidObj.read()
-            if ret:
-                frame_height, frame_width = frame.shape[:2]
-            compute_velocity(tracker_id, centroid_x, centroid_y, scale_factor=1)

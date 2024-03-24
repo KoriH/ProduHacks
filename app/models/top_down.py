@@ -33,6 +33,8 @@ def annotate_frame(frame, x1, y1, x2, y2, tracker_id):
     frame = cv2.putText(frame, f"{velocities[tracker_id]}", (x2+7, y2), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 255), 1)
     return frame
 
+# mock random velocity values based on regions of interest
+
 while vidObj.isOpened():
     # Read a frame from the video
     success, frame = vidObj.read()
