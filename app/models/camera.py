@@ -36,6 +36,7 @@ def annotate_frame(frame, x1, y1, x2, y2, tracker_id):
 
 def collision_frame(frame, x1, y1, x2, y2, tracker_id):
     # different color + text at bottom (bold and red)
+    pass
 
 while vidObj.isOpened():
     # Read a frame from the video

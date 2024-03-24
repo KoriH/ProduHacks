@@ -1,14 +1,14 @@
-from ultralytics import YOLO
-import supervision as sv
 import numpy as np
 import os
 import cv2
+from tracker import *
 
 os.chdir('C:/Users/ishaa/Downloads')
 
-model = YOLO("yolov8n.pt")
-tracker = sv.ByteTrack()
-vidObj = cv2.VideoCapture('test.mp4') 
+# object_detector = cv2.createBackgroundSubtractorMOG2()
+object_detector = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=40)
+tracker = EuclideanDistTracker()
+vidObj = cv2.VideoCapture('test1.mp4') 
 
 frame_id = 0
 centroids = {}
@@ -34,25 +34,36 @@ while vidObj.isOpened():
     # Read a frame from the video
     success, frame = vidObj.read()
     
+    #resize frames to be larger
+    
     if success:
         frame_id += 1
-        uncropped = frame.copy()
-        frame = frame[220:530, :]
-        results = model(frame)[0]
-        detections = sv.Detections.from_ultralytics(results)
-        detections = tracker.update_with_detections(detections)
+        roi = frame[400:750, :]
         
-        for tracker_id, box in zip(detections.tracker_id, detections.xyxy):
-            x1, y1, x2, y2 = box #[0]
-            y1, y2 = y1 + 220, y2 + 220
-            boxes[tracker_id] = (x1, y1, x2, y2)
-            
-            centroid_x = (x1 + x2) / 2
-            centroid_y = (y1 + y2) / 2
-            compute_velocity(tracker_id, centroid_x, centroid_y)
-            centroids[tracker_id] = (centroid_x, centroid_y)
-            annotated_frame = annotate_frame(uncropped, x1, y1, x2, y2, tracker_id)
-            frames[tracker_id] = frame_id
+        
+        gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+        _, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+        
+        mask = object_detector.apply(roi)
+        _, mask = cv2.threshold(thresh, 254, 255, cv2.THRESH_BINARY)
+    
+        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        detections = []
+        for cnt in contours:
+            # Calculate area and remove small elements
+            area = cv2.contourArea(cnt)
+            if area > 100 and area < 1000:
+                # cv2.drawContours(roi, [cnt], -1, (0, 255, 0), 2)
+                x, y, w, h = cv2.boundingRect(cnt)
+                cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
+                detections.append([x, y, w, h])
+            #Show image
+        
+        boxes_ids = tracker.update(detections)
+        for box_id in boxes_ids:
+            x, y, w, h, id = box_id
+            cv2.putText(roi, str(id), (x, y - 15), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
+            cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
         
         # reverse y comparisons
         for box in boxes:
@@ -60,7 +71,7 @@ while vidObj.isOpened():
             # help quant tree????
             
         # Display the annotated frame
-        cv2.imshow("YOLOv8 Inference", annotated_frame)
+        cv2.imshow("OpenCV Inference", roi)
         # Break the loop if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
