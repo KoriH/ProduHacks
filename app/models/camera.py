@@ -4,10 +4,13 @@ import numpy as np
 import os
 import cv2
 
-os.chdir('/Users/kori0909/Downloads')
+# os.chdir('/Users/kori0909/Downloads')
+os.chdir('C:/Users/ishaa/Downloads')
 model = YOLO("yolov8n.pt")
 tracker = sv.ByteTrack()
 vidObj = cv2.VideoCapture('topdown.mp4') 
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
+out = cv2.VideoWriter('output.avi', fourcc, 30.0, (640, 160))
 
 frame_id = 0
 centroids = {}
