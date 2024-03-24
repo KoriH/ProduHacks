@@ -40,7 +40,9 @@ while vidObj.isOpened():
     
     if success:
         frame_id += 1
-        
+        original_length = frame.shape[1] * 2
+        original_height = frame.shape[0] * 2
+        old_frame = cv2.resize(frame, (original_length, original_height))
         roi = frame[40:320, 50:610]
         roi_high = [200,400]
         roi = cv2.resize(roi, (roi.shape[1] * 2, roi.shape[0] * 2))
@@ -57,7 +59,6 @@ while vidObj.isOpened():
                 # cv2.drawContours(roi, [cnt], -1, (0, 255, 0), 2)
                 x, y, w, h = cv2.boundingRect(cnt)
                 # shift and write back onto main image
-                cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
                 detections.append([x, y, w, h])
             #Show image
         
@@ -70,13 +71,13 @@ while vidObj.isOpened():
                 velocity = round(random.uniform(3, 4),1)
             else:
                 velocity = round(random.uniform(1, 3),1)
-                
-            # roi = annotate_frame(roi, x, y, x2, y + h, id)
-            cv2.putText(roi, str(velocity), (x, y - 15), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 2)
-            cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
+            
+            cv2.putText(old_frame, str(velocity), (x+100, y + 50), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), 2)
+            cv2.rectangle(old_frame, (x+100, y+80), (x + w + 100, y + h+80), (0, 255, 0), 3)
 
         # Display the annotated frame
-        cv2.imshow("OpenCV Inference", roi)
+        # cv2.imshow("OpenCV Inference", roi)
+        cv2.imshow("OpenCV Inference", old_frame)
         # Break the loop if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
