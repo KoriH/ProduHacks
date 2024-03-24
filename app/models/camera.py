@@ -85,7 +85,7 @@ while vidObj.isOpened():
             centroid_x = (x1 + x2) / 2
             centroid_y = (y1 + y2) / 2
             if tracker_id in centroids:
-                compute_velocity(tracker_id, centroid_x, centroid_y)
+                compute_velocity(tracker_id, centroid_x, centroid_y, scale_factor=2)
             else:
                 velocities[tracker_id] = 0
             centroids[tracker_id] = (centroid_x, centroid_y)
