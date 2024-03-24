@@ -1,6 +1,7 @@
 from flask import Flask
+import os
 
-app = Flask(__name__)
+template_dir = os.path.abspath('app/client/templates')
+app = Flask(__name__, template_folder=template_dir)
 
-# Import views after creating the app object to avoid circular imports
 from app.client import views
