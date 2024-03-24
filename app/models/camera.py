@@ -37,6 +37,7 @@ def collision_frame(frame, x1, y1, x2, y2, tracker_id):
     # different color + text at bottom (bold and red)
     pass
 
+# Proces video live
 while vidObj.isOpened():
     # Read a frame from the video
     success, frame = vidObj.read()
@@ -71,21 +72,20 @@ while vidObj.isOpened():
             # if centroids are within distance then check object border
             
         # Display the annotated frame
-        cv2.imshow("YOLOv8 Inference", annotated_frame)
+        # cv2.imshow("YOLOv8 Inference", annotated_frame)
         # Break the loop if 'q' is pressed
+    
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
+        
     else:
         # Break the loop if the end of the video is reached
         break
-
 vidObj.release()
 cv2.destroyAllWindows()
 
 
-
-
-# uncomment for camera
+# Process Camera Live
 # cap = cv2.VideoCapture(0)  
 # annotated_frame = None 
 # while cap.isOpened():
@@ -131,4 +131,50 @@ cv2.destroyAllWindows()
 #         # Break the loop if the end of the video is reached
 #         break
 # cap.release()
+# cv2.destroyAllWindows()
+
+# Processs Video and Save
+# frame_width = int(vidObj.get(cv2.CAP_PROP_FRAME_WIDTH))
+# frame_height = int(vidObj.get(cv2.CAP_PROP_FRAME_HEIGHT))
+# fps = vidObj.get(cv2.CAP_PROP_FPS)
+# fourcc = cv2.VideoWriter_fourcc(*'mp4v') 
+# out = cv2.VideoWriter('output.mp4', fourcc, fps, (frame_width, frame_height))
+# # while vidObj.isOpened():
+#     # Read a frame from the video
+#     success, frame = vidObj.read()
+    
+#     if success:
+#         frame_id += 1
+#         uncropped = frame.copy()
+#         frame = frame[220:530, :]
+#         results = model(frame)[0]
+#         detections = sv.Detections.from_ultralytics(results)
+#         detections = tracker.update_with_detections(detections)
+        
+#         for tracker_id, box in zip(detections.tracker_id, detections.xyxy):
+#             x1, y1, x2, y2 = box 
+#             y1, y2 = y1 + 220, y2 + 220
+#             boxes[tracker_id] = (x1, y1, x2, y2)
+            
+#             centroid_x = (x1 + x2) / 2
+#             centroid_y = (y1 + y2) / 2
+#             ret, frame = vidObj.read()
+#             if ret:
+#                 frame_height, frame_width = frame.shape[:2]
+#             compute_velocity(tracker_id, centroid_x, centroid_y, scale_factor=1)
+#             centroids[tracker_id] = (centroid_x, centroid_y)
+#             annotated_frame = annotate_frame(uncropped, x1, y1, x2, y2, tracker_id)
+#             frames[tracker_id] = frame_id
+        
+#         # Write the annotated frame into the output video
+#         out.write(annotated_frame)
+
+#         # Break the loop if 'q' is pressed
+#         if cv2.waitKey(1) & 0xFF == ord("q"):
+#             break
+#     else:
+#         # Break the loop if the end of the video is reached
+#         break
+# vidObj.release()
+# out.release()
 # cv2.destroyAllWindows()
