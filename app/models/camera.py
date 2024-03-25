@@ -18,16 +18,15 @@ frames = {}
 times = {}
 
 def compute_velocity(tracker_id, centroid_x, centroid_y, scale_factor):
-    # Recall previous centroid location of each object
+
     prev_x, prev_y = centroids.get(tracker_id, (centroid_x, centroid_y))
-    # Convert time between last occurence and current occurence to seconds
     frame_count = frames.get(tracker_id, 1)
     
-    # Compute x and y velocities respectively
+
     dx = (centroid_x - prev_x) * scale_factor
     dy = (centroid_y - prev_y) * scale_factor
     
-    # Apply Pythagorean theorem to compute velocity
+
     velocity = np.sqrt(dx**2 + dy**2) / frame_count * 30
     velocities[tracker_id] = round(velocity, 1)
 
